@@ -66,12 +66,24 @@ def accept(afd,word):
 def conversionAFNtoAFD(afn):
     afd = afn.copy()
     afd['transicoes'] = []
-    states = [afn['estado_inicial']]
+    afd['estados_finais'] = []
+    states = []
+    states.append(afn['estado_inicial'])
     processed = []
 
     while len(states) != 0:
         state = states.pop()
+
+        if state in processed:
+            continue
+        processed.append(state)
+
         statelist = state.split('-')
+
+        for e in statelist:
+            if e in afn['estados_finais']:
+                afd['estados_finais'].append(state)
+                continue
 
         for c in afn['alfabeto']:
             newState = []
@@ -86,10 +98,9 @@ def conversionAFNtoAFD(afn):
                 for i in range(1,len(newState)):
                     newStateName = newStateName + '-' + newState[i]
 
-                if newStateName not in processed:
-                    states.append(newStateName)
-                    afd['transicoes'].append([state,c,newStateName])
-                    processed.append(state)
+                states.append(newStateName)
+                afd['transicoes'].append([state,c,newStateName])
+    afd['estados'] = processed
     return afd
 
 
@@ -97,15 +108,16 @@ def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."
 
     with open(args) as arquivo:
-        data = json.load(arquivo)
+        automaton = json.load(arquivo)
         
-    showAutomaton(data)
+    showAutomaton(automaton)
 
-    if(automatonType(data) == 2):
-        showAutomaton(conversionAFNtoAFD(data))
+    if(automatonType(automaton) == 2):
+        automaton = conversionAFNtoAFD(automaton)
+        showAutomaton(automaton)
 
-    for w in data['palavras']:
-        print(w + str(": accepted" if accept(data,w) else ": rejected"))
+    for w in automaton['palavras']:
+        print(w + str(": accepted" if accept(automaton,w) else ": rejected"))
     
 
 

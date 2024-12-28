@@ -27,13 +27,46 @@ def automatonType(data):
     
     return 1
 
+def showAutomaton(data):
+    tipo = ['AFD','AFN','AFN&']
+    print("Tipo: " + tipo[automatonType(data)-1])
+    print("Alfabeto: ",end='')
+    print(data['alfabeto'])
+    print("Estados: " + str(data['estados']))
+    print("Estado Inicial: " + str(data['estado_inicial']))
+    print("Estados Finais: " + str(data['estados_finais']))
+    print("Transicoes: [")
+    for t in data['transicoes']:
+        print('\t'+str(t))
+    print("]")
+
+def accept(automaton,word):
+    state = automaton['estado_inicial']
+
+    if word == "&":
+        return state in automaton['estados_finais']
+
+    for c in word:
+        find = False
+        for t in automaton['transicoes']:
+            if t[0] == state and t[1] == c:
+                state = t[2]
+                find = True
+                break
+        if not find:
+            return False
+    return state in automaton['estados_finais']
+
 def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."
 
     with open(args) as arquivo:
-        dados = json.load(arquivo)
+        data = json.load(arquivo)
         
-    print(automatonType(dados))
+    showAutomaton(data)
+
+    for w in data['palavras']:
+        print(w + str(": accepted" if accept(data,w) else ": rejected"))
     
 
 

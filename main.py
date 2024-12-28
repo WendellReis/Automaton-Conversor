@@ -11,7 +11,7 @@ def automatonType(data):
     '''
 
     mapEstados = {}
-    
+
     for t in data['transicoes']:
         if t[1] == '&':
             return 3
@@ -26,7 +26,6 @@ def automatonType(data):
             mapEstados[t[0]] = [t[1]]
     
     return 1
-
 
 def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."

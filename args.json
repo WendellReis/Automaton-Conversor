@@ -8,5 +8,11 @@
         ["Q1","b","Q1"],
         ["Q2","b","QF"],
         ["QF","a","QF"]
+    ],
+    "palavras": [
+        "aabaaa",
+        "abbaaa",
+        "aaa",
+        "bba"
     ]
 }

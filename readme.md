@@ -19,4 +19,4 @@ O presente repositório possui arquivos .json que exemplificam a forma correta q
 python3 main.py afd.json
 ```
 
-*O correto funcionamento do programa está condicionada a correta descrição do autômato através do arquivo de entrada .json. Além disso, o autômato descrito não deve conter ciclos que podem ser percorridos com caracter vazio ('&')*
+*O correto funcionamento do programa está condicionada a correta descrição do autômato através do arquivo de entrada .json. Além disso, o autômato descrito não deve conter ciclos que podem ser percorridos com caracter vazio ('&').*

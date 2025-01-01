@@ -107,6 +107,14 @@ def AFNtoAFD(afn):
     afd['estados'] = processed
     return afd
 
+def advanceState(s,c,t):
+    states = []
+    for i in t:
+        if s == i[0] and c == i[1]:
+            states.append(i[2])
+    return sorted(set(states))
+
+
 def AFNEtoAFN(afne):
     '''
         Essa funcao converte um dado AFNE em um AFN equivalente
@@ -114,6 +122,25 @@ def AFNEtoAFN(afne):
 
     afn = afne.copy()
     afn['transicoes'] = []
+
+    closures = {}
+    for s in afne['estados']:
+        closures[s] = epsilonClosure(s,afne['transicoes'])
+    
+    for s in afne['estados']:
+        for c in afne['alfabeto']:
+            states = []
+            for i in closures[s]:
+                for j in advanceState(i,c,afne['transicoes']):
+                    states = states + closures[j]
+
+            for i in sorted(set(states)):
+                afn['transicoes'].append([s,c,i])
+        
+    return afn
+
+
+
 
 def epsilonClosure(s,t):
     '''

@@ -1,0 +1,24 @@
+{
+	"alfabeto": ["a","b","c"],
+    "estados": ["1","2","3"],
+    "estado_inicial": "1",
+    "estados_finais": ["3"],
+    "transicoes": [
+        ["1","a","1"],
+        ["1","&","2"],
+        ["2","b","2"],
+        ["2","&","3"],
+        ["3","c","3"]
+    ],
+    "palavras": [
+        "aaaaabbc",
+        "bbccc",
+        "cccc",
+        "abbb",
+        "ac",
+        "c",
+        "cccca",
+        "cbaaa",
+        "accc"
+    ]
+}

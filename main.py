@@ -63,7 +63,11 @@ def accept(afd,word):
             return False
     return state in afd['estados_finais']
 
-def conversionAFNtoAFD(afn):
+def AFNtoAFD(afn):
+    '''
+        Essa funcao converter um dado AFN em um AFD equivalente
+    '''
+
     afd = afn.copy()
     afd['transicoes'] = []
     afd['estados_finais'] = []
@@ -103,6 +107,29 @@ def conversionAFNtoAFD(afn):
     afd['estados'] = processed
     return afd
 
+def AFNEtoAFN(afne):
+    '''
+        Essa funcao converte um dado AFNE em um AFN equivalente
+    '''
+
+    afn = afne.copy()
+    afn['transicoes'] = []
+
+def epsilonClosure(s,t):
+    '''
+        Funcao que retorna o fecho epsulon de um dado estado s em um conjunto t de transicoes
+    '''
+    if s == '&':
+        return []
+    
+    closure = [s]
+
+    for i in t:
+        if i[0] == s and i[1] == '&':
+            for j in epsilonClosure(i[2],t):
+                closure.append(j)
+    
+    return sorted(set(closure))
 
 def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."
@@ -112,8 +139,12 @@ def main(args):
         
     showAutomaton(automaton)
 
-    if(automatonType(automaton) == 2):
-        automaton = conversionAFNtoAFD(automaton)
+    if automatonType(automaton) == 3:
+        automaton = AFNEtoAFN(automaton)
+        showAutomaton(automaton)
+
+    if automatonType(automaton) == 2:
+        automaton = AFNtoAFD(automaton)
         showAutomaton(automaton)
 
     for w in automaton['palavras']:

@@ -11,7 +11,7 @@ A execução do programa depende da passagem do nome de um arquivo em formato .j
 - **estado_inicial**: nome do estado inicial
 - **estados_finais**: vetor contendo os estados finais
 - **transicoes**: vetor de tuplas onde cada elemento representa uma transição do tipo **(QI,c,QF)**, quer dizer uma transição de **QI** para **QF** processando um caracter **c** do alfabeto do autômato.
-- **palavras**: vetor contendo um conjunto de palavras que serão testadas pelo autômato. Esse conjunto pode ser vazio.
+- **palavras**: vetor contendo um conjunto de palavras que serão testadas pelo autômato. Esse conjunto pode ser vazio e a palavra vazia pode ser representada pelo caracter vazio.
 
 O presente repositório possui arquivos .json que exemplificam a forma correta que um autômato deve ser descrito. É possível executar um teste com:
 

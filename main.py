@@ -114,7 +114,6 @@ def advanceState(s,c,t):
             states.append(i[2])
     return sorted(set(states))
 
-
 def AFNEtoAFN(afne):
     '''
         Essa funcao converte um dado AFNE em um AFN equivalente
@@ -139,9 +138,6 @@ def AFNEtoAFN(afne):
         
     return afn
 
-
-
-
 def epsilonClosure(s,t):
     '''
         Funcao que retorna o fecho epsulon de um dado estado s em um conjunto t de transicoes
@@ -157,6 +153,56 @@ def epsilonClosure(s,t):
                 closure.append(j)
     
     return sorted(set(closure))
+
+def id(s,t):
+    for i in range(0,len(t)):
+        if t[i] == s:
+            return i
+    return -1
+
+def markTable(i,j,mat):
+    if mat[i][j] == [0]:
+        return
+
+    cels = mat[i][j]
+    mat[i][j] = [0]
+
+    for k in cels:
+        markTable(k[0],k[1],mat)
+
+
+def minimizeAFD(afd):
+    mat = [[[] for _ in range(len(afd['estados']))] for _ in range(len(afd['estados']))]
+
+    # Marcar estados trivialmente nao equivalentes
+    for i in range(len(afd['estados'])):
+             for j in range(i+1,len(afd['estados'])):
+                if i in afd['estados_finais'] ^ j in afd['estados_finais']:
+                    mat[i][j] = [0]
+
+    for i in range(len(afd['estados'])):
+             for j in range(i+1,len(afd['estados'])):
+                 if mat[i][j] == [0]:
+                     continue
+                 
+                 for c in afd['alfabeto']:
+                    pi = id(advanceState(i,c,afd['transicoes'])[0],afd['transicoes'])
+                    pj = id(advanceState(j,c,afd['transicoes'])[0],afd['transicoes'])
+
+                    if pi == pj:
+                        continue
+                
+                    if pj < pi:
+                        temp = pj
+                        pj = pi
+                        pi = temp
+                    
+                    if mat[pi][pi] != [0]:
+                        mat[pi][pj].append([i,j])
+                    else:
+                        markTable(i,j,mat)
+                        
+                    
 
 def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."

@@ -7,7 +7,7 @@ Este projeto conciste na implementação de um algortimo que reconhece, avalia, 
 A execução do programa depende da passagem do nome de um arquivo em formato .json que deverá conter todas as informações de um autômato finito: 
 
 - **alfabeto**: vetor contendo os caracteres aceitos pela linguagem considerando **'&'** como caracter vazio.
-- **estados: vetor** contendo o nome dos estados
+- **estados: vetor** contendo o nome dos estados. O nome de nenhum estado pode conter vírgula **(',')**.
 - **estado_inicial**: nome do estado inicial
 - **estados_finais**: vetor contendo os estados finais
 - **transicoes**: vetor de tuplas onde cada elemento representa uma transição do tipo **(QI,c,QF)**, quer dizer uma transição de **QI** para **QF** processando um caracter **c** do alfabeto do autômato.

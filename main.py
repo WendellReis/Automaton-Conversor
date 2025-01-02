@@ -82,7 +82,7 @@ def AFNtoAFD(afn):
             continue
         processed.append(state)
 
-        statelist = state.split('-')
+        statelist = state.split(',')
 
         for e in statelist:
             if e in afn['estados_finais']:
@@ -100,7 +100,7 @@ def AFNtoAFD(afn):
                 newStateName = newState[0]
 
                 for i in range(1,len(newState)):
-                    newStateName = newStateName + '-' + newState[i]
+                    newStateName = newStateName + ',' + newState[i]
 
                 states.append(newStateName)
                 afd['transicoes'].append([state,c,newStateName])

@@ -154,12 +154,6 @@ def epsilonClosure(s,t):
     
     return sorted(set(closure))
 
-def id(s,t):
-    for i in range(0,len(t)):
-        if t[i] == s:
-            return i
-    return -1
-
 def markTable(i,j,mat):
     if mat[i][j] == [0]:
         return
@@ -180,14 +174,18 @@ def minimizeAFD(afd):
                 if i in afd['estados_finais'] ^ j in afd['estados_finais']:
                     mat[i][j] = [0]
 
+    id = {}
+    for i in range(len(afd['estados'])):
+        id[afd['estados'][i]] = i
+
     for i in range(len(afd['estados'])):
              for j in range(i+1,len(afd['estados'])):
                  if mat[i][j] == [0]:
                      continue
                  
                  for c in afd['alfabeto']:
-                    pi = id(advanceState(i,c,afd['transicoes'])[0],afd['transicoes'])
-                    pj = id(advanceState(j,c,afd['transicoes'])[0],afd['transicoes'])
+                    pi = id[advanceState(afd['estados'][i],c,afd['transicoes'])[0]]
+                    pj = id[advanceState(afd['estados'][j],c,afd['transicoes'])[0]]
 
                     if pi == pj:
                         continue
@@ -201,7 +199,8 @@ def minimizeAFD(afd):
                         mat[pi][pj].append([i,j])
                     else:
                         markTable(i,j,mat)
-                        
+        
+    
                     
 
 def main(args):

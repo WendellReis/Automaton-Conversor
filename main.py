@@ -240,7 +240,7 @@ def minimizeAFD(afd):
                         pj = pi
                         pi = temp
                     
-                    if mat[pi][pi] != [0]:
+                    if mat[pi][pj] != [0]:
                         mat[pi][pj].append([i,j])
                     else:
                         markTable(i,j,mat)

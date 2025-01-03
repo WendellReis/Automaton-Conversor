@@ -164,22 +164,67 @@ def markTable(i,j,mat):
     for k in cels:
         markTable(k[0],k[1],mat)
 
+def uniteStates(s1,s2,afd):
+    newState = str(s1) + "," + str(s2)
+
+    if afd['estado_inicial'] in [s1,s2]:
+        afd['estado_inicial'] = newState
+
+    afd['estados'] = [s if s != s1 and s != s2 else newState for s in afd['estados']]
+
+    if newState in afd['estados_finais']:
+        afd['estados_finais'].append(newState)
+
+    while True:
+        for i in afd['estados_finais']:
+            if i in [s1,s2]:
+                afd['estados_finais'].remove(i)
+                continue
+        break
+
+    for i in range(len(afd['transicoes'])):
+        if afd['transicoes'][i][0] in [s1,s2]:
+            afd['transicoes'][i][0] = newState
+        if afd['transicoes'][i][2] in [s1,s2]:
+            afd['transicoes'][i][2] = newState
 
 def minimizeAFD(afd):
-    mat = [[[] for _ in range(len(afd['estados']))] for _ in range(len(afd['estados']))]
+    # Adicionando estado coringa
+    jokerState = False
+
+    for s in afd['estados']:
+        for c in afd['alfabeto']:
+            find = False
+            for t in afd['transicoes']:
+                if t[0] == s and t[1] == c:
+                    find = True
+                    break
+            if not find:
+                jokerState = True
+                afd['transicoes'].append([s,c,","])
+    
+    if jokerState:
+        afd['estados'].append(",")
+        for c in afd['alfabeto']:
+            afd['transicoes'].append([",",c,","])
+
+    tam = len(afd['estados'])
+
+
+    mat = [[[] for _ in range(tam)] for _ in range(tam)]
 
     # Marcar estados trivialmente nao equivalentes
-    for i in range(len(afd['estados'])):
-             for j in range(i+1,len(afd['estados'])):
-                if i in afd['estados_finais'] ^ j in afd['estados_finais']:
+    for i in range(tam):
+             for j in range(i+1,tam):
+                if ((i in afd['estados_finais']) ^ (j in afd['estados_finais'])) or afd['estados'][i] == "," or afd['estados'][j] == ",":
                     mat[i][j] = [0]
 
     id = {}
-    for i in range(len(afd['estados'])):
+    for i in range(tam):
         id[afd['estados'][i]] = i
 
-    for i in range(len(afd['estados'])):
-             for j in range(i+1,len(afd['estados'])):
+    for i in range(tam):
+             for j in range(i+1,tam):
                  if mat[i][j] == [0]:
                      continue
                  
@@ -199,31 +244,58 @@ def minimizeAFD(afd):
                         mat[pi][pj].append([i,j])
                     else:
                         markTable(i,j,mat)
-        
-    
-                    
 
+    # Unindo estados nao marcados na matriz
+    while True:
+        for i in range(tam):
+            for j in range(i+1,tam):
+                if mat[i][j] != [0]:
+                    uniteStates(i,j,afd)
+                    mat[i][j] = [0]
+                    continue
+
+        break
+
+
+    # Removendo estado coringa
+    if jokerState:
+        afd['estados'].remove(",")
+        transicions = []
+        for t in afd['transicoes']:
+            if t[0] != "," and t[2] != ",":
+                transicions.append(t)
+                    
+        afd['transicoes'] = transicions
+    return afd
+                    
 def main(args):
     assert os.path.exists(args), "Arquivo especificado nao existe."
 
     with open(args) as arquivo:
         automaton = json.load(arquivo)
-        
+    
+    print('Automato Recebido:')
     showAutomaton(automaton)
 
     if automatonType(automaton) == 3:
+        print('\nConversao AFN& -> AFN Minimizado:')
         automaton = AFNEtoAFN(automaton)
         showAutomaton(automaton)
 
     if automatonType(automaton) == 2:
+        print('\nConversao AFN -> AFD Minimizado:')
         automaton = AFNtoAFD(automaton)
         showAutomaton(automaton)
 
-    for w in automaton['palavras']:
-        print(w + str(": accepted" if accept(automaton,w) else ": rejected"))
+    automaton = minimizeAFD(automaton)
+    print('\nAFD Minimizado:')
+    showAutomaton(automaton)
+
+    if len(automaton['palavras']):
+        print('\nResultados do reconhecimendo das palavras:')
+        for w in automaton['palavras']:
+            print(w + str(": aceita" if accept(automaton,w) else ": rejeitada"))
     
-
-
 if __name__ ==  "__main__":
     assert len(sys.argv) != 1, "Arquivo de entrada nao especificado."
     main(sys.argv[1])

@@ -105,6 +105,17 @@ def AFNtoAFD(afn):
                 states.append(newStateName)
                 afd['transicoes'].append([state,c,newStateName])
     afd['estados'] = processed
+
+    for q in afd['estados']:
+        q = '{' + q + '}'
+
+    for q in afd['estados_finais']:
+        q = '{' + q + '}'
+
+    for t in afd['transicoes']:
+        t[0] = '{' + t[0] + '}'
+        t[2] = '{' + t[2] + '}'
+
     return afd
 
 def advanceState(s,c,t):
